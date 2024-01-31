@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     @GetMapping("/welcome")
-    public String welcome() {
-        return "Hello World! this is Welcome";
+    public String welcome() throws Exception {
+        throw new Exception("PATLADI GİTTİ");
     }
 
     @GetMapping

@@ -28,6 +28,6 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<GenericResponse<Boolean>> generateToken(@RequestBody AuthRequest authRequest, HttpServletResponse httpServletResponse) {
         GenericResponse<Boolean> authResponse = authService.authenticateAndSendToken(authRequest, httpServletResponse);
-        return ResponseEntity.status(authResponse.httpStatusCode()).body(authResponse);
+        return ResponseEntity.status(authResponse.status()).body(authResponse);
     }
 }

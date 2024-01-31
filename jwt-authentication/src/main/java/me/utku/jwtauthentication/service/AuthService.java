@@ -11,6 +11,7 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -38,11 +39,10 @@ public class AuthService {
                 String jwt = jwtService.generateToken(request.username());
                 ResponseCookie cookie = createCookie("jwt", jwt, 3600, "/");
                 httpServletResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-                authResponse = new GenericResponse<>(true, HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase());
+                authResponse = new GenericResponse<>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(),true);
             }
         }catch (Exception e){
-            log.error("Error while authenticating user: {}", e.getMessage());
-            authResponse = new GenericResponse<>(false, HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
+            throw new UsernameNotFoundException("User not found or password is incorrect");
         }
         return authResponse;
     }
