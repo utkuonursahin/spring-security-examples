@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.utku.jwtauthentication.dto.AuthRequest;
-import me.utku.jwtauthentication.dto.AuthResponse;
+import me.utku.jwtauthentication.dto.GenericResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -13,8 +13,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import java.util.Optional;
 
 @Service
 @RequestMapping("/auth")
@@ -32,19 +30,19 @@ public class AuthService {
                 .build();
     }
 
-    public Optional<AuthResponse> authenticateAndSendToken (AuthRequest request, HttpServletResponse httpServletResponse) {
-        Optional<AuthResponse> authResponse = Optional.empty();
+    public GenericResponse<Boolean> authenticateAndSendToken (AuthRequest request, HttpServletResponse httpServletResponse) {
+        GenericResponse<Boolean> authResponse = null;
         try{
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.username(), request.password()));
             if (authentication.isAuthenticated()) {
                 String jwt = jwtService.generateToken(request.username());
                 ResponseCookie cookie = createCookie("jwt", jwt, 3600, "/");
                 httpServletResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-                authResponse = Optional.of(new AuthResponse(true, "Authentication successful", HttpStatus.OK));
+                authResponse = new GenericResponse<>(true, HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase());
             }
         }catch (Exception e){
             log.error("Error while authenticating user: {}", e.getMessage());
-            authResponse = Optional.of(new AuthResponse(false, "Authentication failed because of "+e.getMessage().toLowerCase(), HttpStatus.UNAUTHORIZED));
+            authResponse = new GenericResponse<>(false, HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
         }
         return authResponse;
     }
