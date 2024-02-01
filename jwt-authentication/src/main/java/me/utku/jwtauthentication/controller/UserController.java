@@ -12,7 +12,7 @@ public class UserController {
 
     @GetMapping("/welcome")
     public String welcome() throws Exception {
-        throw new Exception("PATLADI GİTTİ");
+        throw new Exception("Throwing a test exception!");
     }
 
     @GetMapping
