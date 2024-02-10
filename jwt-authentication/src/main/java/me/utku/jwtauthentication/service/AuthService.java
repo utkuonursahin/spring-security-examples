@@ -1,5 +1,6 @@
 package me.utku.jwtauthentication.service;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,12 +24,19 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    private ResponseCookie createCookie(String name, String value, int maxAge, String path) {
-        return ResponseCookie.from(name, value)
+    private ResponseCookie createJwtCookie(String value, int maxAge, String path) {
+        return ResponseCookie.from("jwt", value)
                 .httpOnly(true)
                 .maxAge(maxAge)
                 .path(path)
                 .build();
+    }
+
+    public void resetJwtCookie(HttpServletResponse response) {
+        Cookie cookie = new Cookie("jwt", null);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        response.addCookie(cookie);
     }
 
     public GenericResponse<Boolean> authenticateAndSendToken (AuthRequest request, HttpServletResponse httpServletResponse) {
@@ -37,7 +45,7 @@ public class AuthService {
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.username(), request.password()));
             if (authentication.isAuthenticated()) {
                 String jwt = jwtService.generateToken(request.username());
-                ResponseCookie cookie = createCookie("jwt", jwt, 3600, "/");
+                ResponseCookie cookie = createJwtCookie(jwt, 3600, "/");
                 httpServletResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
                 authResponse = new GenericResponse<>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(),true);
             }

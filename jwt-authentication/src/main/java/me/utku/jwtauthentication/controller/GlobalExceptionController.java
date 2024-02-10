@@ -1,8 +1,12 @@
 package me.utku.jwtauthentication.controller;
 
 import io.jsonwebtoken.ExpiredJwtException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.utku.jwtauthentication.dto.GenericResponse;
+import me.utku.jwtauthentication.service.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -11,9 +15,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-@RestControllerAdvice
 @Slf4j
-public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+@RestControllerAdvice
+@RequiredArgsConstructor
+public class GlobalExceptionController extends ResponseEntityExceptionHandler {
+    private final AuthService authService;
 
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<GenericResponse<Boolean>> usernameNotFoundException(UsernameNotFoundException e) {
@@ -34,8 +40,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(ExpiredJwtException.class)
-    public ResponseEntity<GenericResponse<Boolean>> expiredJwtException(ExpiredJwtException e) {
+    public ResponseEntity<GenericResponse<Boolean>> expiredJwtException(ExpiredJwtException e, HttpServletResponse response) {
         log.warn("Expired JWT: {}.", e.getMessage());
+        authService.resetJwtCookie(response);
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new GenericResponse<>(HttpStatus.UNAUTHORIZED.value(), "Your session has expired.",false));
     }
 
