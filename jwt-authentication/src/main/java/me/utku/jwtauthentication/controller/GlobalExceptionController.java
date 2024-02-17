@@ -22,38 +22,38 @@ public class GlobalExceptionController extends ResponseEntityExceptionHandler {
     private final AuthService authService;
 
     @ExceptionHandler(UsernameNotFoundException.class)
-    public ResponseEntity<GenericResponse<Boolean>> usernameNotFoundException(UsernameNotFoundException e) {
+    public ResponseEntity<GenericResponse<Boolean>> usernameNotFoundExceptionHandler(UsernameNotFoundException e) {
         log.info("UsernameNotFoundException: {}.", e.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new GenericResponse<>(HttpStatus.UNAUTHORIZED.value(), "No user found with this username.",false));
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<GenericResponse<Boolean>> badCredentialsException(BadCredentialsException e) {
+    public ResponseEntity<GenericResponse<Boolean>> badCredentialsExceptionHandler(BadCredentialsException e) {
         log.info("BadCredentialsException: {}.", e.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new GenericResponse<>(HttpStatus.UNAUTHORIZED.value(), "No match for this username / password.",false));
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<GenericResponse<Boolean>> insufficientAuthenticationException(AccessDeniedException e) {
+    public ResponseEntity<GenericResponse<Boolean>> accessDeniedExceptionHandler(AccessDeniedException e) {
         log.info("AccessDeniedException: {}.", e.getMessage());
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new GenericResponse<>(HttpStatus.FORBIDDEN.value(), "You don't have rights to access this resource.",false));
     }
 
     @ExceptionHandler(InsufficientAuthenticationException.class)
-    public ResponseEntity<GenericResponse<Boolean>> insufficientAuthenticationException(InsufficientAuthenticationException e) {
+    public ResponseEntity<GenericResponse<Boolean>> insufficientAuthenticationExceptionHandler(InsufficientAuthenticationException e) {
         log.info("InsufficientAuthenticationException: {}.", e.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new GenericResponse<>(HttpStatus.UNAUTHORIZED.value(), "Insufficient authentication. Be sure you enter your credentials correctly or have rights to access this resource!",false));
     }
 
     @ExceptionHandler(ExpiredJwtException.class)
-    public ResponseEntity<GenericResponse<Boolean>> expiredJwtException(ExpiredJwtException e, HttpServletResponse response) {
+    public ResponseEntity<GenericResponse<Boolean>> expiredJwtExceptionHandler(ExpiredJwtException e, HttpServletResponse response) {
         log.info("ExpiredJwtException: {}.", e.getMessage());
         authService.resetJwtCookie(response);
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new GenericResponse<>(HttpStatus.UNAUTHORIZED.value(), "Your session has expired.",false));
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<GenericResponse<Boolean>> unhandledExceptions(Exception e) {
+    public ResponseEntity<GenericResponse<Boolean>> unhandledExceptionHandler(Exception e) {
         log.info("Exception (UNHANDLED): {}.", e.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new GenericResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Something went wrong.",false));
     }
