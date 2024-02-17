@@ -10,9 +10,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -50,7 +50,7 @@ public class AuthService {
                 authResponse = new GenericResponse<>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(),true);
             }
         }catch (Exception e){
-            throw new UsernameNotFoundException("User not found or password is incorrect");
+            throw new BadCredentialsException("Failed authentication with USERNAME:"+request.username()+" / PASSWORD:"+request.password()+")");
         }
         return authResponse;
     }
