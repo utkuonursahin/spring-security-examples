@@ -43,6 +43,7 @@ public class SecurityConfig {
                                         "/auth/login/**").permitAll()
                                 .requestMatchers("/user/**").authenticated()
                                 .requestMatchers("/user/admin/**").hasRole("ADMIN")
+                                .anyRequest().denyAll()
 
                 )
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
