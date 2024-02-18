@@ -41,15 +41,17 @@ public class SecurityConfig {
                                         "/user/welcome/**",
                                         "/auth/signup/**",
                                         "/auth/login/**").permitAll()
-                                .requestMatchers("/user").authenticated()
+                                .requestMatchers("/user/**").authenticated()
                                 .requestMatchers("/user/admin/**").hasRole("ADMIN")
+
                 )
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(e -> e
                         .authenticationEntryPoint(authenticationEntryPoint())
-                        .accessDeniedHandler(accessDeniedHandler()))
+                        .accessDeniedHandler(accessDeniedHandler())
+                )
                 .build();
     }
 

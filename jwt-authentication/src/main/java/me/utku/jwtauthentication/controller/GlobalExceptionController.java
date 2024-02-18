@@ -42,7 +42,7 @@ public class GlobalExceptionController extends ResponseEntityExceptionHandler {
     @ExceptionHandler(InsufficientAuthenticationException.class)
     public ResponseEntity<GenericResponse<Boolean>> insufficientAuthenticationExceptionHandler(InsufficientAuthenticationException e) {
         log.info("InsufficientAuthenticationException: {}.", e.getMessage());
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new GenericResponse<>(HttpStatus.UNAUTHORIZED.value(), "Insufficient authentication. Be sure you enter your credentials correctly or have rights to access this resource!",false));
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new GenericResponse<>(HttpStatus.UNAUTHORIZED.value(), "Authentication failed. Be sure you enter your credentials correctly or have rights to access this resource!",false));
     }
 
     @ExceptionHandler(ExpiredJwtException.class)
