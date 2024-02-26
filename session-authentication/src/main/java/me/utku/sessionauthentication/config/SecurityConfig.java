@@ -12,7 +12,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
@@ -20,6 +19,7 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.security.web.savedrequest.NullRequestCache;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
 @Configuration
@@ -38,15 +38,21 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authenticationProvider(authenticationProvider())
                 .securityContext(context -> context.securityContextRepository(securityContextRepository()))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+                .requestCache(requestCache -> requestCache.requestCache(nullRequestCache()))
                 .authorizeHttpRequests(req ->
-                        req.requestMatchers("/user/welcome/**", "/auth/signup/**", "/auth/login/**", "/auth/logout").permitAll()
+                        req.requestMatchers("/user/welcome/**",
+                                        "/auth/signup/**",
+                                        "/auth/login/**",
+                                        "/auth/logout").permitAll()
                                 .requestMatchers("/user/**").authenticated()
                                 .requestMatchers("/user/admin/**").hasRole("ADMIN")
                                 .anyRequest().denyAll()
                 )
                 .logout(logout -> logout
                         .logoutUrl("/auth/logout")
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
+                        .deleteCookies("JSESSIONID")
                         .logoutSuccessHandler(logoutSuccessHandler()))
                 .exceptionHandling(e -> e
                         .authenticationEntryPoint(authenticationEntryPoint())
@@ -56,11 +62,16 @@ public class SecurityConfig {
     }
 
     @Bean
+    public NullRequestCache nullRequestCache() {
+        return new NullRequestCache();
+    }
+
+    @Bean
     public LogoutSuccessHandler logoutSuccessHandler() {
         return (request, response, authentication) -> {
             response.setStatus(200);
             response.setContentType("application/json");
-            response.getWriter().write("{\"message\":\"Logout successful\",\"statusCode\":200,\"data\":true}");
+            response.getWriter().write("{\"statusCode\":200,\"message\":\"Logout successful\",\"data\":true}");
         };
     }
 
