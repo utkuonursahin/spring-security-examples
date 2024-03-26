@@ -1,6 +1,5 @@
 package me.utku.sessionauthentication.service;
 
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import me.utku.sessionauthentication.dto.CreateUserRequest;
 import me.utku.sessionauthentication.model.User;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@Data
 @Service
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {

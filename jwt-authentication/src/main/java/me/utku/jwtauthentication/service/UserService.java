@@ -1,6 +1,5 @@
 package me.utku.jwtauthentication.service;
 
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import me.utku.jwtauthentication.dto.CreateUserRequest;
 import me.utku.jwtauthentication.model.User;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@Data
 @Service
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {

@@ -1,6 +1,5 @@
 package me.utku.basicauthentication.service;
 
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import me.utku.basicauthentication.dto.CreateUserRequest;
 import me.utku.basicauthentication.model.User;
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@Data
 @Service
 @RequiredArgsConstructor
 public class UserService {

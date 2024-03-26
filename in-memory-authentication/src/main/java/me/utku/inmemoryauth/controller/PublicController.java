@@ -10,6 +10,6 @@ public class PublicController {
 
     @GetMapping
     public String helloWorld(){
-        return "Hello World! from Public Controller SADADASDASDASDAS";
+        return "Hello World! from Public Controller";
     }
 }
