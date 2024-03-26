@@ -49,7 +49,7 @@ public class AuthService {
                 //To use jwt authentication with cookies, you can use the following commented code block instead of the authorization header.
                 /*ResponseCookie cookie = createJwtCookie(jwt, 3600, "/");
                 httpServletResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());*/
-                httpServletResponse.addHeader(HttpHeaders.AUTHORIZATION, jwt);
+                httpServletResponse.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + jwt);
                 authResponse = new GenericResponse<>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(),true);
             }
         }catch (Exception e){
