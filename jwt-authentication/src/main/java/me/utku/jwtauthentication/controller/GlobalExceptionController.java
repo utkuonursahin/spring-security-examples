@@ -57,7 +57,8 @@ public class GlobalExceptionController extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ExpiredJwtException.class)
     public ResponseEntity<GenericResponse<Boolean>> expiredJwtExceptionHandler(ExpiredJwtException e, HttpServletResponse response) {
         log.info("ExpiredJwtException: {}.", e.getMessage());
-        authService.resetJwtCookie(response);
+        response.setHeader(HttpHeaders.AUTHORIZATION, null);
+        //authService.resetJwtCookie(response); // Uncomment to use jwt authentication with cookies and comment the above line.
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new GenericResponse<>(HttpStatus.UNAUTHORIZED.value(), "Your session has expired.",false));
     }
 

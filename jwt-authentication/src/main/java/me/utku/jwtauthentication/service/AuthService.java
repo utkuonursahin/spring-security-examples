@@ -14,7 +14,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 @Service
 @RequiredArgsConstructor
@@ -23,9 +22,12 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    private ResponseCookie createJwtCookie(String value, int maxAge, String path) {
+    //To use jwt authentication with cookies, you should uncomment the following code block.
+    /*private ResponseCookie createJwtCookie(String value, int maxAge, String path) {
         return ResponseCookie.from("jwt", value)
                 .httpOnly(true)
+                .secure(true)
+                .sameSite("Strict")
                 .maxAge(maxAge)
                 .path(path)
                 .build();
@@ -37,15 +39,17 @@ public class AuthService {
         cookie.setPath("/");
         response.addCookie(cookie);
     }
-
+*/
     public GenericResponse<Boolean> authenticateAndSendToken (AuthRequest request, HttpServletResponse httpServletResponse) {
         GenericResponse<Boolean> authResponse = null;
         try{
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.username(), request.password()));
             if (authentication.isAuthenticated()) {
                 String jwt = jwtService.generateToken(request.username());
-                ResponseCookie cookie = createJwtCookie(jwt, 3600, "/");
-                httpServletResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+                //To use jwt authentication with cookies, you can use the following commented code block instead of the authorization header.
+                /*ResponseCookie cookie = createJwtCookie(jwt, 3600, "/");
+                httpServletResponse.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());*/
+                httpServletResponse.addHeader(HttpHeaders.AUTHORIZATION, jwt);
                 authResponse = new GenericResponse<>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(),true);
             }
         }catch (Exception e){
