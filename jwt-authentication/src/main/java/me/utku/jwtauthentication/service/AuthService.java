@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Service
-@RequestMapping("/auth")
 @RequiredArgsConstructor
 @Slf4j
 public class AuthService {
