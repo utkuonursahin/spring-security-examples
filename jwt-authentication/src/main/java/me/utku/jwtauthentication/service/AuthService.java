@@ -53,7 +53,7 @@ public class AuthService {
                 authResponse = new GenericResponse<>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(),true);
             }
         }catch (Exception e){
-            throw new BadCredentialsException("Failed authentication with USERNAME:"+request.username()+" / PASSWORD:"+request.password()+")");
+            throw new BadCredentialsException("Failed authentication with USERNAME:"+request.username());
         }
         return authResponse;
     }
