@@ -44,8 +44,8 @@ public class SecurityConfig {
                                         "/auth/signup/**",
                                         "/auth/login/**",
                                         "/auth/logout").permitAll()
-                                .requestMatchers("/user/**").authenticated()
                                 .requestMatchers("/user/admin/**").hasRole("ADMIN")
+                                .requestMatchers("/user/**").authenticated()
                                 .anyRequest().denyAll()
                 )
                 .logout(logout -> logout
